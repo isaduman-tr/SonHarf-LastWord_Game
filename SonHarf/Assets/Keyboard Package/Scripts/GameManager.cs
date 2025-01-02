@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    newWordTextBox.text = "Listede yok, tekrar deneyiniz.";
+                    newWordTextBox.text = "Listede yok, tekrar deneyiniz .";
                 }
             }
             else
