@@ -289,7 +289,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 316, y: 497}
+  m_AnchoredPosition: {x: 262, y: 506}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &218440787
@@ -823,7 +823,6 @@ MonoBehaviour:
   inputTextBox: {fileID: 852178559}
   outputTextBox: {fileID: 63264406}
   newWordTextBox: {fileID: 218440787}
-  wordsTextFile: {fileID: 4900000, guid: bfd00c6c0679f0f4ea2375eb8bc21509, type: 3}
 --- !u!4 &1032424600
 Transform:
   m_ObjectHideFlags: 0
