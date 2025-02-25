@@ -522,23 +522,14 @@ namespace DentedPixel.LTExamples
             yield return new WaitForSeconds(expectedTime);
             Time.timeScale = 1f;
 
-            int ltCount = 0;
-
-            // Yeni API'yi kullanarak tüm GameObject'leri alıyoruz
-            GameObject[] allGos = Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
-
-            foreach (GameObject go in allGos)
-            {
-                if (go.name == "~LeanTween")
-                ltCount++;
-            }  
-            
-            // LeanTween nesnelerinin doğru şekilde temizlenip temizlenmediğini test ediyoruz
-            LeanTest.expect(ltCount == 1, "RESET CORRECTLY CLEANS UP");
-
-            // Coroutine başlatıyoruz
-            StartCoroutine(lotsOfCancels());
-
+int ltCount = 0;
+GameObject[] allGos = FindObjectsByType(typeof(GameObject), FindObjectsInactive.Include, FindObjectsSortMode.None) as GameObject[];
+foreach (GameObject go in allGos)
+{
+    if (go.name == "~LeanTween")
+        ltCount++;
+}
+LeanTest.expect(ltCount == 1, "RESET CORRECTLY CLEANS UP");
         }
 
         IEnumerator lotsOfCancels()

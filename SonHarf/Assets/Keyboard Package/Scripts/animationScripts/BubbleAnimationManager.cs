@@ -62,5 +62,15 @@ public class BubbleAnimationManager : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+    public void ResetAnimation()
+    {
+        if (bubbleAnimator != null)
+        {
+            bubbleAnimator.ResetTrigger("Play"); // Trigger'ı sıfırla
+            bubbleAnimator.Play("Idle", 0, 0f); // İlk state'e geri dön
+        }
+
+        gameObject.SetActive(false); // Bubble'ı kapat
+    }
 }
 
