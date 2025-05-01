@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class PuanManager : MonoBehaviour , IStartable , IStoppable
+public class PuanManager : MonoBehaviour, IStartable, IStoppable
 {
     public static PuanManager Instance;
 
@@ -16,6 +16,11 @@ public class PuanManager : MonoBehaviour , IStartable , IStoppable
     [SerializeField] public TextMeshProUGUI playerScoreTextBox3;
     [SerializeField] TextMeshProUGUI opponentScoreTextBox;
     [SerializeField] private LevelSystem levelSystem;
+    [SerializeField] private TextMeshProUGUI multiplierTextBox;
+
+    [SerializeField] private TimerBar timerBar;        // TimerBar referansı
+
+    private int currentDisplayedMultiplier = -1;
 
     private void Awake()
     {
@@ -29,31 +34,65 @@ public class PuanManager : MonoBehaviour , IStartable , IStoppable
         }
     }
 
+    private void Start()
+    {
+        // Eğer inspector'da atanmamışsa sahneden bul
+        if (timerBar == null)
+            timerBar = Object.FindFirstObjectByType<TimerBar>();
+
+
+        // Başlangıç UI'ı
+        UpdateMultiplierUI(1);
+    }
+
+    private void Update()
+    {
+        // Joker sabit çarpanı yoksa, zaman bazlı çarpanı gerçek zamanlı hesapla
+        if (_fixedMultiplier == 1f && timerBar != null)
+        {
+            float remainingTime = timerBar.GetRemainingTime();
+            int m = GetMultiplier(remainingTime);
+            if (m != currentDisplayedMultiplier)
+            {
+                currentDisplayedMultiplier = m;
+                UpdateMultiplierUI(m);
+            }
+        }
+    }
+
     public void Begin()
     {
         ResetScores(); // Oyun başlangıcında puanları sıfırla
         UpdatePlayerScoreUI(); // UI'ı güncelle
         UpdateOpponentScoreUI();
+        UpdateMultiplierUI(1);
     }
 
     public void AddPlayerScore(int points, float remainingTime)
     {
         // Eğer joker (double score) aktifse _fixedMultiplier 1'den farklı olur.
-    int multiplier = _fixedMultiplier != 1f 
-                        ? Mathf.RoundToInt(_fixedMultiplier)  // Joker aktif: multiplier = 8
-                        : GetMultiplier(remainingTime);         // Normalde: zaman dilimine göre multiplier
-
-    int totalPoints = Mathf.RoundToInt(points * multiplier);
-    Debug.Log("Toplam Puan: " + totalPoints + " (Points: " + points + ", Multiplier: " + multiplier + ")");
-    playerScore += totalPoints;
-    UpdatePlayerScoreUI();
-    OnScoreUpdated?.Invoke();
+        int multiplier = _fixedMultiplier != 1f
+                            ? Mathf.RoundToInt(_fixedMultiplier)  // Joker aktif: multiplier = 8
+                            : GetMultiplier(remainingTime);         // Normalde: zaman dilimine göre multiplier
+        UpdateMultiplierUI(multiplier);
+        int totalPoints = Mathf.RoundToInt(points * multiplier);
+        Debug.Log("Toplam Puan: " + totalPoints + " (Points: " + points + ", Multiplier: " + multiplier + ")");
+        playerScore += totalPoints;
+        UpdatePlayerScoreUI();
+        OnScoreUpdated?.Invoke();
     }
 
     public void AddOpponentScore(int points, float remainingTime)
     {
-        int multiplier = GetMultiplier(remainingTime); // Zaman dilimine göre kat sayıyı al
-        opponentScore += points * multiplier; // Puanı katlayarak ekle
+        // Rakibe geçince varsa joker sabit çarpanını kaldır ve dinamik güncellemeyi sıfırla
+        if (_fixedMultiplier != 1f)
+        {
+            ResetMultiplier();
+            currentDisplayedMultiplier = -1;
+        }
+
+        int multiplier = GetMultiplier(remainingTime);
+        opponentScore += points * multiplier;
         UpdateOpponentScoreUI();
         OnScoreUpdated?.Invoke();
     }
@@ -82,6 +121,14 @@ public class PuanManager : MonoBehaviour , IStartable , IStoppable
             return 1; // 5-0 saniye arası: 1x
         }
     }
+    // Çarpan UI'ını güncelle
+    public void UpdateMultiplierUI(int multiplier)
+    {
+        
+        if (multiplierTextBox != null)
+            multiplierTextBox.text = multiplier + "x";
+    }
+
 
     private void UpdatePlayerScoreUI()
     {
@@ -137,6 +184,7 @@ public class PuanManager : MonoBehaviour , IStartable , IStoppable
         opponentScore = 0;
         UpdatePlayerScoreUI();
         UpdateOpponentScoreUI();
+        UpdateMultiplierUI(1);
     }
 
     public void StopGame()
@@ -146,14 +194,43 @@ public class PuanManager : MonoBehaviour , IStartable , IStoppable
     }
 
     public void ApplyFixedMultiplier(float multiplier)
-{
-    _fixedMultiplier = multiplier;
-    Debug.Log($"Sabit Çarpan Aktif: {multiplier}x");
-}
+    {
+        _fixedMultiplier = multiplier;
+        Debug.Log($"Sabit Çarpan Aktif: {multiplier}x");
+        UpdateMultiplierUI(Mathf.RoundToInt(multiplier));
+    }
 
-public void ResetMultiplier()
-{
-    _fixedMultiplier = 1f;
-    Debug.Log("Sabit Çarpan Sıfırlandı!");
-}
+    public void ResetMultiplier()
+    {
+        _fixedMultiplier = 1f;
+        Debug.Log("Sabit Çarpan Sıfırlandı!");
+        //UpdateMultiplierUI(1);
+    }
+    public void JokerButton()
+    {
+        JokerType joker = JokerManager.Instance.GetCurrentJoker();
+
+        float multiplier = 1f;
+        switch (joker)
+        {
+            case JokerType.DoubleScore:
+                multiplier = 8f;
+                break;
+            case JokerType.DoubleScore2:
+                multiplier = 10f;
+                break;
+            case JokerType.DoubleScore3:
+                multiplier = 15f;
+                break;
+            default:
+                Debug.LogWarning("selmanasker");
+                return;
+        }
+
+        ApplyFixedMultiplier(multiplier);
+    }
+
+
+
+
 }

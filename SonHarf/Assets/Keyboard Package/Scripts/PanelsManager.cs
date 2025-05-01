@@ -10,10 +10,19 @@ public class PanelsManager : MonoBehaviour
     public GameObject onlineCoinBetPanel;
     public GameObject onlineRandomAvatarPanel;
     public GameObject onlineChatPanel;
+    public GameObject InfoPanel;
+    public GameObject closeinfopanelbutton;
+    public GameObject Avatarmarketpanel;
+    public GameObject AvatarMarketdelaypanel;
+   
+
 
     public Button offlineButton;
     public Button offlineRandomToChatButton;
     public Button offlineChatBackButton;
+
+
+    public Button oflinechatbackbutton1;
     public Button onlineButton;
     public Button onlineCoinBetToRandomButton;
     public Button onlineRandomToChatButton;
@@ -21,6 +30,11 @@ public class PanelsManager : MonoBehaviour
     public Button onlineBackButton;
     public Button onlineRandomBackButton;
     public Button onlineChatBackButton;
+    
+    public Button avatarmarketdelayforwin;
+    public Button avatarmarketdelayforlose;
+
+
 
     public Animator offlineAnimator;
     public Animator onlineAnimator;
@@ -49,6 +63,11 @@ public class PanelsManager : MonoBehaviour
         });
 
         offlineChatBackButton.onClick.AddListener(() =>
+        {
+            HidePanel(offlineChatPanel, offlineAnimator, "TersCardAnimation", mainPanel);
+            StartCoroutine(ResetAnimatorsAndDeactivatePanels(0.5f));
+        });
+        oflinechatbackbutton1.onClick.AddListener(() =>
         {
             HidePanel(offlineChatPanel, offlineAnimator, "TersCardAnimation", mainPanel);
             StartCoroutine(ResetAnimatorsAndDeactivatePanels(0.5f));
@@ -138,4 +157,37 @@ public class PanelsManager : MonoBehaviour
         onlineChatPanel.SetActive(false);
         offlineChatPanel.SetActive(false);
     }
+    public void Infopanel()
+    {
+        InfoPanel.SetActive(true);
+        
+    }
+    public void Closeinfopanel()
+    {
+        InfoPanel.SetActive(false);
+    }
+    public void AvatarMarketButon()
+    {
+        Avatarmarketpanel.SetActive(false);
+    }
+    
+    public void CloseAvatarPanel()
+    {
+        Avatarmarketpanel.SetActive(true);
+    }
+    public void DevamEtBtn()
+    {
+        AvatarMarketdelaypanel.SetActive(true);
+        StartCoroutine(KapatDelayPanel());
+        
+
+
+    }
+
+    private IEnumerator KapatDelayPanel()
+    {
+        yield return new WaitForSeconds(0.90f);
+        AvatarMarketdelaypanel.SetActive(false);
+    }
+   
 }

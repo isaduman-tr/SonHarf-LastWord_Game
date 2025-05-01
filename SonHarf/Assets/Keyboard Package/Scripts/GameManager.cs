@@ -5,7 +5,7 @@ using System.IO;
 using System.Collections;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour , IStartable , IStoppable
+public class GameManager : MonoBehaviour, IStartable, IStoppable
 {
     public static GameManager Instance;
     [SerializeField] TextMeshProUGUI inputTextBox;
@@ -18,10 +18,10 @@ public class GameManager : MonoBehaviour , IStartable , IStoppable
     [SerializeField] private GameObject jokerImage;
 
 
-    [SerializeField] Transform scrollViewContent;         
-    [SerializeField] Transform opponentScrollViewContent; 
+    [SerializeField] Transform scrollViewContent;
+    [SerializeField] Transform opponentScrollViewContent;
     [SerializeField] GameObject textPrefab;
-    [SerializeField] GameObject bubblePrefab; 
+    [SerializeField] GameObject bubblePrefab;
     [SerializeField] GameObject opponentBubblePrefab;
     [SerializeField] private Transform jokerWordContent;
     [SerializeField] private GameObject jokerWordButtonPrefab;
@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour , IStartable , IStoppable
     private List<GameObject> currentJokerButtons = new List<GameObject>();
 
     private Dictionary<char, List<string>> wordDictionary;
-    private int playerWordCount = 0; 
+    private int playerWordCount = 0;
     private int opponentWordCount = 0;
     private bool isPlayerTurn;
     public int playerTurnCount = 0;
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour , IStartable , IStoppable
         ClearAllContent();
     }
 
-        private void OnTimerEnded()
+    private void OnTimerEnded()
     {
         if (isPlayerTurn)
         {
@@ -64,6 +64,8 @@ public class GameManager : MonoBehaviour , IStartable , IStoppable
             timerBar.StartTimer();
             UpdateBarArrowRotation();
             HideJokerWithAnimation();
+            // joker çarpan kalıntısını anında temizle:
+            PuanManager.Instance.ResetMultiplier();
 
             if (lastOpponentWord != "")
             {
@@ -75,7 +77,7 @@ public class GameManager : MonoBehaviour , IStartable , IStoppable
                 // Rakip rastgele bir kelime ile başlar
                 StartCoroutine(StartOpponentTurn());
             }
-        
+
         }
 
     }
@@ -113,7 +115,7 @@ public class GameManager : MonoBehaviour , IStartable , IStoppable
         public int Count;
     }
 
-        public void StartGameRandomly()
+    public void StartGameRandomly()
     {
         timerBar.ResetTimer();
         // Rastgele bir sayı üret (0 veya 1)
@@ -125,7 +127,7 @@ public class GameManager : MonoBehaviour , IStartable , IStoppable
             Debug.Log("Oyuncu başlıyor!");
             isPlayerTurn = true;
             playerTurnCount++; // EKLE
-        Debug.Log("Player turn count: " + playerTurnCount); // EKLE
+            Debug.Log("Player turn count: " + playerTurnCount); // EKLE
             timerBar.StartTimer();
         }
         else
@@ -175,115 +177,117 @@ public class GameManager : MonoBehaviour , IStartable , IStoppable
         GenerateJokerWordButton();
     }
 
-        private void UpdateBarArrowRotation()
-{
-    // Turn değişiminde TimerBar'ı default 20 saniyeye ayarla.
-    if (timerBar != null)
+    private void UpdateBarArrowRotation()
     {
-        timerBar.SetDefaultTime(20f);
+        // Turn değişiminde TimerBar'ı default 20 saniyeye ayarla.
+        if (timerBar != null)
+        {
+            timerBar.SetDefaultTime(20f);
+        }
+
+        float targetRotation = isPlayerTurn ? 45f : -45f;
+        LeanTween.rotateZ(barArrow.gameObject, targetRotation, 0.5f)
+                 .setEase(LeanTweenType.easeOutQuad)
+                 .setOnComplete(() =>
+                 {
+                     // Raycast durumunu güncelle: oyuncu sırası ise dokunma kapalı, değilse açık.
+                     raycastTargetImage.raycastTarget = !isPlayerTurn;
+                 });
     }
-    
-    float targetRotation = isPlayerTurn ? 45f : -45f;
-    LeanTween.rotateZ(barArrow.gameObject, targetRotation, 0.5f)
-             .setEase(LeanTweenType.easeOutQuad)
-             .setOnComplete(() => 
-             {
-                 // Raycast durumunu güncelle: oyuncu sırası ise dokunma kapalı, değilse açık.
-                 raycastTargetImage.raycastTarget = !isPlayerTurn;
-             });
-}
 
     public void SubmitWord()
-{
-    RemoveJokerWordButton();
-    if (!isPlayerTurn)
     {
-        outputTextBox.text = "Şu anda rakibin sırası!";
-        return;
-        
-    }
-
-    string inputWord = inputTextBox.text.ToLower();
-    inputTextBox.text = "";
-
-    if (inputWord.Length > 0)
-    {
-        bool isWordInList = false;
-        foreach (var list in wordDictionary.Values)
+        RemoveJokerWordButton();
+        if (!isPlayerTurn)
         {
-            if (list.Contains(inputWord))
-            {
-                isWordInList = true;
-                break;
-            }
-        }
-
-        if (!isWordInList)
-        {
-            outputTextBox.text = "Kelime StreamingAssets'te bulunamadı!";
+            outputTextBox.text = "Şu anda rakibin sırası!";
             return;
+
         }
 
-        string newWord = newWordTextBox.text.ToLower();
-        if (newWord.Length > 0)
-        {
-            char newWordLastChar = newWord[newWord.Length - 1]; // Son harf
-            char inputWordFirstChar = inputWord[0]; // ilk harf
+        string inputWord = inputTextBox.text.ToLower();
+        inputTextBox.text = "";
 
-            // input ilk harf son harf uyumu
-            if (inputWordFirstChar != newWordLastChar)
+        if (inputWord.Length > 0)
+        {
+            bool isWordInList = false;
+            foreach (var list in wordDictionary.Values)
             {
-                // uyum yoksa
-                outputTextBox.text = "Kelimenin baş harfi '" + newWordLastChar + "' ile başlamalı!";
-                inputTextBox.text = inputWord;
+                if (list.Contains(inputWord))
+                {
+                    isWordInList = true;
+                    break;
+                }
+            }
+
+            if (!isWordInList)
+            {
+                outputTextBox.text = "Kelime StreamingAssets'te bulunamadı!";
                 return;
             }
-        }
 
-        WordCounter playerWordCounter = new WordCounter { Count = playerWordCount };
-        StartCoroutine(DelayedAddWordToScrollView(scrollViewContent, playerWordCounter, inputWord, bubblePrefab));
-
-        if (bubbleAnimationManager != null)
-        {
-            bubbleAnimationManager.PlayBubbleAnimation(inputWord);
-        }
-        float remainingTime = timerBar.GetRemainingTime();
-        PuanManager.Instance.AddPlayerScore(inputWord.Length, remainingTime);
-
-        char lastChar = inputWord[inputWord.Length - 1]; // input son harf
-
-        if (wordDictionary.ContainsKey(lastChar))
-        {
-            List<string> possibleWords = wordDictionary[lastChar];
-            if (possibleWords.Count > 0)
+            string newWord = newWordTextBox.text.ToLower();
+            if (newWord.Length > 0)
             {
-                string newOpponentWord = possibleWords[Random.Range(0, possibleWords.Count)];
-                newWordTextBox.text = newOpponentWord;
-                lastOpponentWord = newOpponentWord;
+                char newWordLastChar = newWord[newWord.Length - 1]; // Son harf
+                char inputWordFirstChar = inputWord[0]; // ilk harf
 
-                // Rakibin hamlesini başlat
-                isPlayerTurn = false; // Rakibin sırası
-                UpdateBarArrowRotation();
-                timerBar.ResetTimer();
-                timerBar.StartTimer();
-                HideJokerWithAnimation();
-                StartCoroutine(AddOpponentWordWithRandomDelay(newOpponentWord));
+                // input ilk harf son harf uyumu
+                if (inputWordFirstChar != newWordLastChar)
+                {
+                    // uyum yoksa
+                    outputTextBox.text = "Kelimenin baş harfi '" + newWordLastChar + "' ile başlamalı!";
+                    inputTextBox.text = inputWord;
+                    return;
+                }
+            }
+
+            WordCounter playerWordCounter = new WordCounter { Count = playerWordCount };
+            StartCoroutine(DelayedAddWordToScrollView(scrollViewContent, playerWordCounter, inputWord, bubblePrefab));
+
+            if (bubbleAnimationManager != null)
+            {
+                bubbleAnimationManager.PlayBubbleAnimation(inputWord);
+            }
+            float remainingTime = timerBar.GetRemainingTime();
+            PuanManager.Instance.AddPlayerScore(inputWord.Length, remainingTime);
+
+            char lastChar = inputWord[inputWord.Length - 1]; // input son harf
+
+            if (wordDictionary.ContainsKey(lastChar))
+            {
+                List<string> possibleWords = wordDictionary[lastChar];
+                if (possibleWords.Count > 0)
+                {
+                    string newOpponentWord = possibleWords[Random.Range(0, possibleWords.Count)];
+                    newWordTextBox.text = newOpponentWord;
+                    lastOpponentWord = newOpponentWord;
+
+                    // Rakibin hamlesini başlat
+                    isPlayerTurn = false; // Rakibin sırası
+                                          // anında çarpanı temizle
+                    PuanManager.Instance.ResetMultiplier();
+                    UpdateBarArrowRotation();
+                    timerBar.ResetTimer();
+                    timerBar.StartTimer();
+                    HideJokerWithAnimation();
+                    StartCoroutine(AddOpponentWordWithRandomDelay(newOpponentWord));
+                }
+                else
+                {
+                    outputTextBox.text = "Listede yok, tekrar deneyiniz.";
+                }
             }
             else
             {
                 outputTextBox.text = "Listede yok, tekrar deneyiniz.";
             }
-        }
-        else
-        {
-            outputTextBox.text = "Listede yok, tekrar deneyiniz.";
-        }
 
-        playerWordCount = playerWordCounter.Count;
+            playerWordCount = playerWordCounter.Count;
+        }
     }
-}
 
-private IEnumerator StartOpponentTurnWithLastChar(char lastChar)
+    private IEnumerator StartOpponentTurnWithLastChar(char lastChar)
     {
         if (wordDictionary.ContainsKey(lastChar))
         {
@@ -310,7 +314,7 @@ private IEnumerator StartOpponentTurnWithLastChar(char lastChar)
         // Rakibin hamlesi bitti, sıra oyuncuda
         isPlayerTurn = true;
         playerTurnCount++; // EKLE
-    Debug.Log("Player turn count: " + playerTurnCount); // EKLE
+        Debug.Log("Player turn count: " + playerTurnCount); // EKLE
         timerBar.ResetTimer(); // Zamanlayıcıyı sıfırla
         timerBar.StartTimer(); // Zamanlayıcıyı başlat
         UpdateBarArrowRotation();
@@ -325,22 +329,22 @@ private IEnumerator StartOpponentTurnWithLastChar(char lastChar)
     }
 
     private IEnumerator AddOpponentWordWithRandomDelay(string word)
-{
-    float randomDelay = Random.Range(18f, 19f); // random zaman cevap
-    yield return new WaitForSeconds(randomDelay);
-    AddWordToScrollView(opponentScrollViewContent, ref opponentWordCount, word, opponentBubblePrefab);
-    float remainingTime = timerBar.GetRemainingTime();
+    {
+        float randomDelay = Random.Range(18f, 19f); // random zaman cevap
+        yield return new WaitForSeconds(randomDelay);
+        AddWordToScrollView(opponentScrollViewContent, ref opponentWordCount, word, opponentBubblePrefab);
+        float remainingTime = timerBar.GetRemainingTime();
 
-    PuanManager.Instance.AddOpponentScore(word.Length, remainingTime);
-    // Rakibin hamlesi bitti, sıra oyuncuda
-    isPlayerTurn = true; // Oyuncunun sırası
-    playerTurnCount++; // EKLE
-    Debug.Log("Player turn count: " + playerTurnCount); // EKLE
-    timerBar.ResetTimer();
-    timerBar.StartTimer(); // Zamanlayıcıyı yeniden başlat
-    UpdateBarArrowRotation();
-    GenerateJokerWordButton();
-}
+        PuanManager.Instance.AddOpponentScore(word.Length, remainingTime);
+        // Rakibin hamlesi bitti, sıra oyuncuda
+        isPlayerTurn = true; // Oyuncunun sırası
+        playerTurnCount++; // EKLE
+        Debug.Log("Player turn count: " + playerTurnCount); // EKLE
+        timerBar.ResetTimer();
+        timerBar.StartTimer(); // Zamanlayıcıyı yeniden başlat
+        UpdateBarArrowRotation();
+        GenerateJokerWordButton();
+    }
 
 
     private void AddWordToScrollView(Transform content, ref int wordCount, string word, GameObject bubblePrefab)
@@ -388,58 +392,58 @@ private IEnumerator StartOpponentTurnWithLastChar(char lastChar)
 
     public void HideJokerWithAnimation()
     {
-    if (!jokerImage.activeSelf) return; // Eğer zaten kapalıysa işlem yapma
+        if (!jokerImage.activeSelf) return; // Eğer zaten kapalıysa işlem yapma
 
-    // Animator bileşenini kapat
-    Animator animator = jokerImage.GetComponent<Animator>();
-    if (animator != null) animator.enabled = false; // Animator'ü devre dışı bırak
+        // Animator bileşenini kapat
+        Animator animator = jokerImage.GetComponent<Animator>();
+        if (animator != null) animator.enabled = false; // Animator'ü devre dışı bırak
 
-    LeanTween.cancel(jokerImage); // Önce diğer animasyonları iptal et
+        LeanTween.cancel(jokerImage); // Önce diğer animasyonları iptal et
 
-    // Eğer bir UI objesiyse, RectTransform üzerinden işlem yap
-    RectTransform jokerRect = jokerImage.GetComponent<RectTransform>();
+        // Eğer bir UI objesiyse, RectTransform üzerinden işlem yap
+        RectTransform jokerRect = jokerImage.GetComponent<RectTransform>();
 
-    // LeanTween animasyonu başlat
-    LeanTween.scale(jokerRect, Vector3.zero, 0.5f)
-        .setEase(LeanTweenType.easeInOutQuad)
-        .setIgnoreTimeScale(false)
-        .setOnComplete(() => 
-        {
-            jokerImage.SetActive(false); // Tamamen kaybolunca kapat
-            jokerImage.transform.localScale = Vector3.one; // Resetle
-            if (animator != null) animator.enabled = true; // Animasyonu tekrar aç
-        });
+        // LeanTween animasyonu başlat
+        LeanTween.scale(jokerRect, Vector3.zero, 0.5f)
+            .setEase(LeanTweenType.easeInOutQuad)
+            .setIgnoreTimeScale(false)
+            .setOnComplete(() =>
+            {
+                jokerImage.SetActive(false); // Tamamen kaybolunca kapat
+                jokerImage.transform.localScale = Vector3.one; // Resetle
+                if (animator != null) animator.enabled = true; // Animasyonu tekrar aç
+            });
     }
 
     private void GenerateJokerWordButton()
     {
         RemoveJokerWordButtons(); // Eski butonları temizle
-        
-        if(string.IsNullOrEmpty(lastOpponentWord)) return;
-        
+
+        if (string.IsNullOrEmpty(lastOpponentWord)) return;
+
         char lastChar = lastOpponentWord[lastOpponentWord.Length - 1];
-        
-        if(!wordDictionary.ContainsKey(lastChar)) return;
+
+        if (!wordDictionary.ContainsKey(lastChar)) return;
 
         // Joker tipine göre buton sayısını belirle
         int buttonCount = 1;
-        if(JokerManager.Instance.GetCurrentJoker() == JokerType.RevealWord2) buttonCount = 2;
-        else if(JokerManager.Instance.GetCurrentJoker() == JokerType.RevealWord3) buttonCount = 3;
+        if (JokerManager.Instance.GetCurrentJoker() == JokerType.RevealWord2) buttonCount = 2;
+        else if (JokerManager.Instance.GetCurrentJoker() == JokerType.RevealWord3) buttonCount = 3;
 
         // Kelime listesinden rastgele X adet kelime seç
         List<string> selectedWords = new List<string>();
         List<string> possibleWords = wordDictionary[lastChar];
-        
-        for(int i = 0; i < buttonCount; i++)
+
+        for (int i = 0; i < buttonCount; i++)
         {
-            if(possibleWords.Count == 0) break;
-            
+            if (possibleWords.Count == 0) break;
+
             int randomIndex = Random.Range(0, possibleWords.Count);
             selectedWords.Add(possibleWords[randomIndex]);
         }
 
         // Seçilen kelimeler için buton oluştur
-        foreach(string word in selectedWords)
+        foreach (string word in selectedWords)
         {
             GameObject newButton = Instantiate(jokerWordButtonPrefab, jokerWordContent);
             currentJokerButtons.Add(newButton);
@@ -454,33 +458,33 @@ private IEnumerator StartOpponentTurnWithLastChar(char lastChar)
 
     private void RemoveJokerWordButtons()
     {
-        foreach(GameObject btn in currentJokerButtons)
+        foreach (GameObject btn in currentJokerButtons)
         {
             Destroy(btn);
         }
         currentJokerButtons.Clear();
     }
-    
+
     private void RemoveJokerWordButton()
-{
-    if (currentJokerButton != null)
     {
-        Destroy(currentJokerButton);
-        currentJokerButton = null;
+        if (currentJokerButton != null)
+        {
+            Destroy(currentJokerButton);
+            currentJokerButton = null;
+        }
     }
-}   
 
     public void UseJokerWord(string jokerWord)
-{
-    // Joker kelime kullanıldı, butonu kaldır
-    RemoveJokerWordButton();
+    {
+        // Joker kelime kullanıldı, butonu kaldır
+        RemoveJokerWordButton();
 
-    // Button üzerindeki kelimeyi inputTextBox'a aktar
-    inputTextBox.text = jokerWord;
+        // Button üzerindeki kelimeyi inputTextBox'a aktar
+        inputTextBox.text = jokerWord;
 
-    // Oyuncu kelime girişi metodunu çağır (normal SubmitWord() akışı uygulanır)
-    SubmitWord();
-}
+        // Oyuncu kelime girişi metodunu çağır (normal SubmitWord() akışı uygulanır)
+        SubmitWord();
+    }
 
 
     public void StopGame()
@@ -491,14 +495,14 @@ private IEnumerator StartOpponentTurnWithLastChar(char lastChar)
         Debug.Log("Oyun durduruldu");
     }
 
-     public void ClearAllContent()
+    public void ClearAllContent()
     {
         // Player scroll view temizleme
         foreach (Transform child in scrollViewContent)
         {
             Destroy(child.gameObject);
         }
-        
+
         // Opponent scroll view temizleme
         foreach (Transform child in opponentScrollViewContent)
         {

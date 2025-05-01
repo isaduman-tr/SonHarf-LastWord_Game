@@ -186,7 +186,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      envato-labs-ai-2e1c45af-1df0-40e1-ab2e-337c0c816742_0: 8022452887627189483
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

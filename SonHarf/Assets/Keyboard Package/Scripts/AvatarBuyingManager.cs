@@ -30,7 +30,8 @@ public class AvatarBuyingManager : MonoBehaviour
     private AvatarData selectedAvatar;
 
     public TMP_Text avatarFeatureText;
-    
+    public TMP_Text avatarFeatureText2;
+
 
 
     private void Awake()
@@ -112,45 +113,81 @@ public class AvatarBuyingManager : MonoBehaviour
         selectedAvatar = avatar;
         int price = GetPriceFromJokerType(avatar.jokerType);
         bool purchased = PlayerPrefs.GetInt("Avatar_" + avatar.buttonID, 0) == 1;
-        
-        
+
+
 
         if (avatarFeatureText != null)
-    {
-        switch (avatar.jokerType)
         {
-            case JokerType.DoubleScore:
-                avatarFeatureText.text = "Puanınızı tek tur için 8 katına çıkararak oyunda size büyük avantaj sağlayan bu avatar, her hamlenizde fark yaratır.";
-                break;
-            case JokerType.DoubleScore2:
-                avatarFeatureText.text = "Puanınızı tek tur için 10 katına çıkaran bu avatar, hamlelerinize ekstra güç katarak sizi oyunun lideri konumuna taşır.";
-                break;
-            case JokerType.DoubleScore3:
-                avatarFeatureText.text = "Puanınızı tek tur için 15 katına çıkaran bu avatar, yüksek skorlar elde etmeniz için mükemmel bir destek sunar.";
-                break;
-            case JokerType.FreezeTime:
-                avatarFeatureText.text = "Tur sürenize tek seferlik 20 saniye ekleyerek size ekstra düşünme zamanı kazandıran bu avatar, stratejinizin anahtarıdır.";
-                break;
-            case JokerType.FreezeTime2:
-                avatarFeatureText.text = "Tur sürenizi 25 saniye uzatan bu avatar, riskleri minimize ederken daha rahat kararlar almanızı sağlar.";
-                break;
-            case JokerType.FreezeTime3:
-                avatarFeatureText.text = "Tur Sürenizi 30 saniye artıran bu avatar, size plan yapma ve hamlelerinizi optimize etme fırsatı sunar.";
-                break;
-            case JokerType.RevealWord:
-                avatarFeatureText.text = "Zorlandığınız anlarda 1 kelime jokeri sunarak sizi kurtaran bu avatar, kritik hamlelerinizde yanınızda.";
-                break;
-            case JokerType.RevealWord2:
-                avatarFeatureText.text = "2 kelime jokeri ile hatalarınızı telafi etmenizi kolaylaştıran bu avatar, stratejinize ekstra destek katar.";
-                break;
-            case JokerType.RevealWord3:
-                avatarFeatureText.text = "3 kelime jokeri sağlayarak maksimum esneklik sunan bu avatar, en zorlu durumlarda bile sizi güçlü kılar.";
-                break;
-            default:
-                avatarFeatureText.text = "";
-                break;
+            switch (avatar.jokerType)
+            {
+                case JokerType.DoubleScore:
+                    avatarFeatureText.text = "Puanınızı tek tur için 8 katına çıkararak oyunda size büyük avantaj sağlayan bu avatar, her hamlenizde fark yaratır.";
+                    break;
+                case JokerType.DoubleScore2:
+                    avatarFeatureText.text = "Puanınızı tek tur için 10 katına çıkaran bu avatar, hamlelerinize ekstra güç katarak sizi oyunun lideri konumuna taşır.";
+                    break;
+                case JokerType.DoubleScore3:
+                    avatarFeatureText.text = "Puanınızı tek tur için 15 katına çıkaran bu avatar, yüksek skorlar elde etmeniz için mükemmel bir destek sunar.";
+                    break;
+                case JokerType.FreezeTime:
+                    avatarFeatureText.text = "Tur sürenize tek seferlik 20 saniye ekleyerek size ekstra düşünme zamanı kazandıran bu avatar, stratejinizin anahtarıdır.";
+                    break;
+                case JokerType.FreezeTime2:
+                    avatarFeatureText.text = "Tur sürenizi 25 saniye uzatan bu avatar, riskleri minimize ederken daha rahat kararlar almanızı sağlar.";
+                    break;
+                case JokerType.FreezeTime3:
+                    avatarFeatureText.text = "Tur Sürenizi 30 saniye artıran bu avatar, size plan yapma ve hamlelerinizi optimize etme fırsatı sunar.";
+                    break;
+                case JokerType.RevealWord:
+                    avatarFeatureText.text = "Zorlandığınız anlarda 1 kelime jokeri sunarak sizi kurtaran bu avatar, kritik hamlelerinizde yanınızda.";
+                    break;
+                case JokerType.RevealWord2:
+                    avatarFeatureText.text = "2 kelime jokeri ile hatalarınızı telafi etmenizi kolaylaştıran bu avatar, stratejinize ekstra destek katar.";
+                    break;
+                case JokerType.RevealWord3:
+                    avatarFeatureText.text = "3 kelime jokeri sağlayarak maksimum esneklik sunan bu avatar, en zorlu durumlarda bile sizi güçlü kılar.";
+                    break;
+                default:
+                    avatarFeatureText.text = "";
+                    break;
+            }
         }
-    }
+        if (avatarFeatureText2 != null)
+        {
+            switch (avatar.jokerType)
+            {
+                case JokerType.DoubleScore:
+                    avatarFeatureText2.text = "Puanınızı tek tur için 8 katına çıkararak oyunda size büyük avantaj sağlayan bu avatar, her hamlenizde fark yaratır.";
+                    break;
+                case JokerType.DoubleScore2:
+                    avatarFeatureText2.text = "Puanınızı tek tur için 10 katına çıkaran bu avatar, hamlelerinize ekstra güç katarak sizi oyunun lideri konumuna taşır.";
+                    break;
+                case JokerType.DoubleScore3:
+                    avatarFeatureText2.text = "Puanınızı tek tur için 15 katına çıkaran bu avatar, yüksek skorlar elde etmeniz için mükemmel bir destek sunar.";
+                    break;
+                case JokerType.FreezeTime:
+                    avatarFeatureText2.text = "Tur sürenize tek seferlik 20 saniye ekleyerek size ekstra düşünme zamanı kazandıran bu avatar, stratejinizin anahtarıdır.";
+                    break;
+                case JokerType.FreezeTime2:
+                    avatarFeatureText2.text = "Tur sürenizi 25 saniye uzatan bu avatar, riskleri minimize ederken daha rahat kararlar almanızı sağlar.";
+                    break;
+                case JokerType.FreezeTime3:
+                    avatarFeatureText2.text = "Tur Sürenizi 30 saniye artıran bu avatar, size plan yapma ve hamlelerinizi optimize etme fırsatı sunar.";
+                    break;
+                case JokerType.RevealWord:
+                    avatarFeatureText2.text = "Zorlandığınız anlarda 1 kelime jokeri sunarak sizi kurtaran bu avatar, kritik hamlelerinizde yanınızda.";
+                    break;
+                case JokerType.RevealWord2:
+                    avatarFeatureText2.text = "2 kelime jokeri ile hatalarınızı telafi etmenizi kolaylaştıran bu avatar, stratejinize ekstra destek katar.";
+                    break;
+                case JokerType.RevealWord3:
+                    avatarFeatureText2.text = "3 kelime jokeri sağlayarak maksimum esneklik sunan bu avatar, en zorlu durumlarda bile sizi güçlü kılar.";
+                    break;
+                default:
+                    avatarFeatureText2.text = "";
+                    break;
+            }
+        }
         if (purchased)
     {
         globalPurchaseButton.interactable = false;

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a8f5e515585355d4bb7d4552d7713192
+guid: 38a864eb09eee3e42a0badd93186a506
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6929296329070242031
-    second: Paragraf metniniz (7)_0
+      213: -4815620143959787168
+    second: delayimg_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -152,13 +152,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Paragraf metniniz (7)_0
+      name: delayimg_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 500
-        height: 500
+        width: 3292
+        height: 4938
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,8 +167,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fe866ad5c4ec92060800000000000000
-      internalID: 6929296329070242031
+      spriteID: 069bf0a4efa7b2db0800000000000000
+      internalID: -4815620143959787168
       vertices: []
       indices: 
       edges: []
@@ -187,7 +187,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Paragraf metniniz (7)_0: 6929296329070242031
+      delayimg_0: -4815620143959787168
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
