@@ -61,7 +61,7 @@ public class JokerManager : MonoBehaviour
 
         PuanManager.Instance.ApplyFixedMultiplier(fixedMultiplier);
         _isJokerActive = true;
-        StartCoroutine(ResetMultiplierAfterDelay());
+        //StartCoroutine(ResetMultiplierAfterDelay());
     }
 
     public void ActivateFreezeTime()
