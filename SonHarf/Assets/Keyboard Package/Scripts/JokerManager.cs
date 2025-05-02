@@ -96,7 +96,7 @@ public class JokerManager : MonoBehaviour
         }
 
         _isJokerActive = true;
-        StartCoroutine(ResetJokerStateAfterDelay());
+        //StartCoroutine(ResetJokerStateAfterDelay());
     }
 
 

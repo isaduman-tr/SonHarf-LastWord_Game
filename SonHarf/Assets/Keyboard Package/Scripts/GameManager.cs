@@ -179,12 +179,12 @@ public class GameManager : MonoBehaviour, IStartable, IStoppable
             }
             else
             {
-                outputTextBox.text = "Listede yok, tekrar deneyiniz.";
+                //outputTextBox.text = "Listede yok, tekrar deneyiniz.";
             }
         }
         else
         {
-            outputTextBox.text = "Listede yok, tekrar deneyiniz.";
+            //outputTextBox.text = "Listede yok, tekrar deneyiniz.";
         }
 
         // Rakibin hamlesi bitti, sıra oyuncuda
@@ -293,12 +293,12 @@ public class GameManager : MonoBehaviour, IStartable, IStoppable
                 }
                 else
                 {
-                    outputTextBox.text = "Listede yok, tekrar deneyiniz.";
+                    //outputTextBox.text = "Listede yok, tekrar deneyiniz.";
                 }
             }
             else
             {
-                outputTextBox.text = "Listede yok, tekrar deneyiniz.";
+                //outputTextBox.text = "Listede yok, tekrar deneyiniz.";
             }
 
             playerWordCount = playerWordCounter.Count;
@@ -321,12 +321,12 @@ public class GameManager : MonoBehaviour, IStartable, IStoppable
             }
             else
             {
-                outputTextBox.text = "Listede yok, tekrar deneyiniz.";
+                //outputTextBox.text = "Listede yok, tekrar deneyiniz.";
             }
         }
         else
         {
-            outputTextBox.text = "Listede yok, tekrar deneyiniz.";
+            //outputTextBox.text = "Listede yok, tekrar deneyiniz.";
         }
 
         // Rakibin hamlesi bitti, sıra oyuncuda

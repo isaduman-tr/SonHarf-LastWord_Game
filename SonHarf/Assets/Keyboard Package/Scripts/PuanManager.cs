@@ -103,7 +103,7 @@ public class PuanManager : MonoBehaviour, IStartable, IStoppable
     private void UpdatePlayerScoreUI()
     {
         if (playerScoreTextBox != null)
-            playerScoreTextBox.text = "Oyuncu Puanı: " + playerScore;
+            playerScoreTextBox.text = playerScore.ToString();
 
         if (playerScoreTextBox2 != null)
         {
@@ -129,7 +129,7 @@ public class PuanManager : MonoBehaviour, IStartable, IStoppable
     private void UpdateOpponentScoreUI()
     {
         if (opponentScoreTextBox != null)
-            opponentScoreTextBox.text = "Rakip Puanı: " + opponentScore;
+            opponentScoreTextBox.text = opponentScore.ToString();
     }
 
     public int GetPlayerScore() => playerScore;
