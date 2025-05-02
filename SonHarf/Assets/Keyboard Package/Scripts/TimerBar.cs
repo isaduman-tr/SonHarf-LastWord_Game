@@ -9,16 +9,16 @@ public class TimerBar : MonoBehaviour, IStartable, IStoppable
     private bool isRunning = false;
 
     public delegate void TimerEndedHandler();
-    public event TimerEndedHandler OnTimerEnd; // Süre bitince çağrılacak event
+    public event TimerEndedHandler OnTimerEnd;
 
-    private Color startColor;  // Başlangıç rengi (Yeşil - #62FF81)
-    private Color middleColor; // Orta renk (Sarı - #FFDB51)
-    private Color endColor;    // Bitiş rengi (Kırmızı - #FF5151)
+    private Color startColor;   // #62FF81
+    private Color middleColor;  // #FFDB51
+    private Color endColor;     // #FF5151
 
     public void Begin()
     {
         InitializeColors();
-        Debug.Log("TimerBar başlatıldı");
+        Debug.Log("TimerBar hazırlandı (başlatılmadı)");
     }
 
     void Update()
@@ -28,13 +28,12 @@ public class TimerBar : MonoBehaviour, IStartable, IStoppable
             currentTime -= Time.deltaTime;
             timerImage.fillAmount = currentTime / totalTime;
 
-            // Zamanlayıcının rengini güncelle
             UpdateTimerColor();
 
             if (currentTime <= 0)
             {
                 isRunning = false;
-                OnTimerEnd?.Invoke(); // Süre bitince event çalıştır
+                OnTimerEnd?.Invoke();
             }
         }
     }
@@ -48,63 +47,63 @@ public class TimerBar : MonoBehaviour, IStartable, IStoppable
 
     private void UpdateTimerColor()
     {
-        float halfTime = totalTime / 2; // 10 saniye (orta nokta)
-        
+        float halfTime = totalTime / 2;
+
         if (currentTime > halfTime)
         {
-            // Yeşilden sarıya doğru
             float lerpValue = Mathf.InverseLerp(totalTime, halfTime, currentTime);
             timerImage.color = Color.Lerp(startColor, middleColor, lerpValue);
         }
         else
         {
-            // Sarıdan kırmızıya doğru
             float lerpValue = Mathf.InverseLerp(halfTime, 0, currentTime);
             timerImage.color = Color.Lerp(middleColor, endColor, lerpValue);
         }
     }
 
     public void AddExtraTime(float extraTime)
-{
-    currentTime += extraTime;
-    totalTime += extraTime;
-    
-    // Güncel fillAmount hesaplaması
-    timerImage.fillAmount = currentTime / totalTime;
-    
-    Debug.Log("Extra time eklendi. Yeni süre: " + currentTime + " / " + totalTime);
-}
+    {
+        currentTime += extraTime;
+        totalTime += extraTime;
+        timerImage.fillAmount = currentTime / totalTime;
+
+        Debug.Log("Extra time eklendi. Yeni süre: " + currentTime + " / " + totalTime);
+    }
 
     public void SetDefaultTime(float defaultTime)
-{
-    // Yeni default süreyi ayarla
-    totalTime = defaultTime;
-    // Mevcut zamanı da default değere eşitle
-    currentTime = defaultTime;
-    timerImage.fillAmount = 1f;
-}
+    {
+        totalTime = defaultTime;
+        currentTime = defaultTime;
+        timerImage.fillAmount = 1f;
+    }
+
     public void StartTimer()
     {
+        if (isRunning) return; // Timer zaten çalışıyorsa tekrar başlatma
+
         currentTime = totalTime;
         isRunning = true;
         timerImage.fillAmount = 1f;
-        timerImage.color = startColor; // Başlangıç rengini ayarla
-        Debug.Log("Timer BAŞLADI: " + currentTime);
+        timerImage.color = startColor;
+
+        Debug.Log("Timer BAŞLADI: " + currentTime);  // Timer başladığında mesajı yazdır
     }
 
     public void StopTimer()
     {
         isRunning = false;
-        currentTime = 0; // Zamanı sıfırla
+        currentTime = 0;
         timerImage.fillAmount = 0;
+        Debug.Log("Timer DURDURULDU");
     }
 
     public void ResetTimer()
     {
         currentTime = totalTime;
         timerImage.fillAmount = 1f;
-        timerImage.color = startColor; // Başlangıç rengine sıfırla
+        timerImage.color = startColor;
         isRunning = false;
+        Debug.Log("Timer RESETLENDİ");
     }
 
     public float GetRemainingTime()
@@ -114,7 +113,8 @@ public class TimerBar : MonoBehaviour, IStartable, IStoppable
 
     public void StopGame()
     {
-        StopTimer();
-        ResetTimer();
+        StopTimer();   // Süreyi durdur
+        ResetTimer();  // Sıfırla ama tekrar başlamasın
+        Debug.Log("Oyun durduruldu ve timer sıfırlandı");
     }
 }

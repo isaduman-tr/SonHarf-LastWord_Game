@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour, IStartable, IStoppable
     public int playerTurnCount = 0;
     private string lastOpponentWord = "";
 
+
+    private bool isGameStarted = false;
+
     private void Start()
     {
         Instance = this;
@@ -53,6 +56,18 @@ public class GameManager : MonoBehaviour, IStartable, IStoppable
         StartGameRandomly();
         ClearAllContent();
     }
+
+    public void StartGame()
+    {
+        if (!isGameStarted)  // Oyun başlamadıysa
+        {
+            isGameStarted = true;
+            timerBar.StartTimer(); // Timer başlat
+            Debug.Log("Oyun Başladı");
+        }
+    }
+
+    // Timer bitişi
 
     private void OnTimerEnded()
     {
@@ -117,7 +132,10 @@ public class GameManager : MonoBehaviour, IStartable, IStoppable
 
     public void StartGameRandomly()
     {
-        timerBar.ResetTimer();
+        if (isGameStarted) return;  // Oyun zaten başladıysa, tekrar başlatma
+
+        timerBar.ResetTimer(); // Timer'ı sıfırla
+
         // Rastgele bir sayı üret (0 veya 1)
         int randomStart = Random.Range(0, 2);
 
@@ -128,18 +146,18 @@ public class GameManager : MonoBehaviour, IStartable, IStoppable
             isPlayerTurn = true;
             playerTurnCount++; // EKLE
             Debug.Log("Player turn count: " + playerTurnCount); // EKLE
-            timerBar.StartTimer();
+            timerBar.StartTimer();  // Timer başlat
         }
         else
         {
             // Rakip başlar
             Debug.Log("Rakip başlıyor!");
             isPlayerTurn = false;
-            timerBar.StartTimer();
+            timerBar.StartTimer();  // Timer başlat
             StartCoroutine(StartOpponentTurn());
         }
-        UpdateBarArrowRotation();
 
+        UpdateBarArrowRotation();
     }
 
 
@@ -489,6 +507,7 @@ public class GameManager : MonoBehaviour, IStartable, IStoppable
 
     public void StopGame()
     {
+        isGameStarted = false;  // Oyunun bitişi
         StopAllCoroutines();
         timerBar.StopTimer();
         isPlayerTurn = false;
