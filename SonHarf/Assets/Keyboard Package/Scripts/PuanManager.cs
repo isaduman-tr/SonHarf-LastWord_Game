@@ -10,6 +10,7 @@ public class PuanManager : MonoBehaviour, IStartable, IStoppable
     private int playerScore = 0;
     private int opponentScore = 0;
     private float _fixedMultiplier = 1f;
+    public static bool jokerbutonunabastın =false;
 
     [SerializeField] public TextMeshProUGUI playerScoreTextBox;
     [SerializeField] public TextMeshProUGUI playerScoreTextBox2;
@@ -170,9 +171,12 @@ public class PuanManager : MonoBehaviour, IStartable, IStoppable
     {
         JokerType joker = JokerManager.Instance.GetCurrentJoker();
         float multiplier = 1f;
+        float extraTime = 0f;
 
+        // Joker türünü kontrol et
         switch (joker)
         {
+            // DoubleScore türü jokerler için çarpan değeri belirle
             case JokerType.DoubleScore:
                 multiplier = 8f;
                 break;
@@ -182,11 +186,39 @@ public class PuanManager : MonoBehaviour, IStartable, IStoppable
             case JokerType.DoubleScore3:
                 multiplier = 15f;
                 break;
+
+            // FreezeTime türü jokerler için süre ekle
+            case JokerType.FreezeTime:
+                extraTime = 10f;
+                break;
+            case JokerType.FreezeTime2:
+                extraTime = 15f;
+                break;
+            case JokerType.FreezeTime3:
+                extraTime = 20f;
+                break;
+
+            // Geçerli joker türü yoksa uyarı ver
             default:
-                Debug.LogWarning("Joker tipi bulunamadı.");
+                Debug.LogWarning("Geçerli bir joker tipi bulunamadı.");
                 return;
         }
 
-        ApplyFixedMultiplier(multiplier);
+        // Eğer DoubleScore jokeri aktifse, çarpan uygula
+        if (joker == JokerType.DoubleScore || joker == JokerType.DoubleScore2 || joker == JokerType.DoubleScore3)
+        {
+            ApplyFixedMultiplier(multiplier);
+        }
+
+        // Eğer FreezeTime jokeri aktifse, ekstra zaman ekle
+        if (joker == JokerType.FreezeTime || joker == JokerType.FreezeTime2 || joker == JokerType.FreezeTime3)
+        {
+            TimerBar timerBar = Object.FindFirstObjectByType<TimerBar>();
+            if (timerBar != null)
+            {
+                timerBar.AddExtraTime(extraTime);
+                Debug.Log($"FreezeTime aktif: {extraTime} saniye eklendi.");
+            }
+        }
     }
 }

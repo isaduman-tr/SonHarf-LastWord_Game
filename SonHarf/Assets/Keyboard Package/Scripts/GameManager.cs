@@ -530,6 +530,7 @@ public class GameManager : MonoBehaviour, IStartable, IStoppable
 
         playerWordCount = 0;
         opponentWordCount = 0;
+        playerTurnCount = 0;
         lastOpponentWord = "";
         inputTextBox.text = "";
         newWordTextBox.text = "";
